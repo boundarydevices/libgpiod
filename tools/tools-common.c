@@ -19,7 +19,11 @@
 
 const char *get_progname(void)
 {
+#if defined __ANDROID__
+	return getprogname();
+#else
 	return program_invocation_name;
+#endif
 }
 
 void die(const char *fmt, ...)
@@ -27,7 +31,7 @@ void die(const char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "%s: ", program_invocation_name);
+	fprintf(stderr, "%s: ", get_progname());
 	vfprintf(stderr, fmt, va);
 	fprintf(stderr, "\n");
 	va_end(va);
@@ -40,7 +44,7 @@ void die_perror(const char *fmt, ...)
 	va_list va;
 
 	va_start(va, fmt);
-	fprintf(stderr, "%s: ", program_invocation_name);
+	fprintf(stderr, "%s: ", get_progname());
 	vfprintf(stderr, fmt, va);
 	fprintf(stderr, ": %s\n", strerror(errno));
 	va_end(va);
@@ -51,7 +55,7 @@ void die_perror(const char *fmt, ...)
 void print_version(void)
 {
 	printf("%s (libgpiod) v%s\n",
-	       program_invocation_short_name, gpiod_version_string());
+	       get_progname(), gpiod_version_string());
 	printf("Copyright (C) 2017-2018 Bartosz Golaszewski\n");
 	printf("License: LGPLv2.1\n");
 	printf("This is free software: you are free to change and redistribute it.\n");
